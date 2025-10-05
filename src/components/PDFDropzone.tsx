@@ -25,12 +25,12 @@ interface PDFFile {
 }
 
 interface PDFDropzoneProps {
-    onContinue?: () => void
+    handleContinue?: () => void
     pdfFile: PDFFile | null
     setPdfFile: (file: PDFFile | null) => void
 }
 
-export default function PDFDropzone({ onContinue, pdfFile, setPdfFile }: PDFDropzoneProps) {
+export default function PDFDropzone({ handleContinue, pdfFile, setPdfFile }: PDFDropzoneProps) {
     const [isDragOver, setIsDragOver] = useState(false)
 
     // Open PDF in new tab using blob URL
@@ -229,10 +229,12 @@ export default function PDFDropzone({ onContinue, pdfFile, setPdfFile }: PDFDrop
                                     </Button>
                                 )}
 
-                                <Button variant="outline" size="lg">
-                                    <ArrowRight className="h-4 w-4 mr-2" />
-                                    Interact with PDF
-                                </Button>
+                                {pdfFile.status === 'success' && handleContinue && (
+                                    <Button variant="outline" size="lg" onClick={handleContinue}>
+                                        <ArrowRight className="h-4 w-4 mr-2" />
+                                        Interact with PDF
+                                    </Button>
+                                )}
                             </div>
                         </div>
                     )}
