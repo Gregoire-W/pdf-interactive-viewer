@@ -33,6 +33,8 @@ export default function PDFViewer({ file }: PDFViewerProps) {
 
     useEffect(() => {
         console.log("start useEffect for file change");
+        let resizeTimeout: NodeJS.Timeout;
+
         const loadPDF = async () => {
             if (canvasContainerRef.current && file) {
                 // Create blob URL from user's file
@@ -78,7 +80,27 @@ export default function PDFViewer({ file }: PDFViewerProps) {
             }
         }
 
+        // Initial PDF load
         loadPDF();
+
+        // Setup ResizeObserver for container size changes
+        if (canvasContainerRef.current && file) {
+            const handleResize = () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    console.log("Resizing PDF after 0.5 seconds delay");
+                    loadPDF();
+                }, 500);
+            };
+
+            const resizeObserver = new ResizeObserver(handleResize);
+            resizeObserver.observe(canvasContainerRef.current);
+
+            return () => {
+                clearTimeout(resizeTimeout);
+                resizeObserver.disconnect();
+            };
+        }
 
     }, [file])
 
