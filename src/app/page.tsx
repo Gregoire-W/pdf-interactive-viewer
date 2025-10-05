@@ -1,9 +1,9 @@
 "use client"
 
 import PDFDropzone, { PDFFile } from '@/components/PDFDropzone'
-import PDFInteractionView from '@/components/PDFInteractionView'
 import { useState } from 'react'
 import { FileCode } from 'lucide-react'
+import PDFInteractionView from "@/components/PDFInteractionView";
 
 export default function Home() {
 

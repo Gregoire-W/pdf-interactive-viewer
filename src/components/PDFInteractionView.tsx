@@ -1,6 +1,5 @@
 'use client'
 
-import { useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -14,6 +13,9 @@ import {
     Copy,
 } from 'lucide-react'
 import { PDFFile } from './PDFDropzone'
+import dynamic from 'next/dynamic'
+
+const PDFViewer = dynamic(() => import("./PDFViewer"), { ssr: false });
 
 interface PDFInteractionViewProps {
     pdfFile: PDFFile | null
@@ -22,8 +24,6 @@ interface PDFInteractionViewProps {
 
 export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionViewProps) {
     if (!pdfFile) return null
-
-    const pdfContainerRef = useRef<HTMLDivElement>(null)
 
     const interactionTools = [
         {
@@ -135,20 +135,9 @@ export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionVi
                         </CardHeader>
                         <CardContent className="h-full">
                             <div
-                                className="w-full h-full bg-muted/20 rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center"
-                                ref={pdfContainerRef}
+                                className="size-full rounded-lg border-2 border-dashed border-muted-foreground/25 flex overflow-auto"
                             >
-                                <div className="text-center space-y-4">
-                                    <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mx-auto">
-                                        <Type className="h-8 w-8 text-primary" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-lg font-semibold">PDF Viewer Coming Soon</h3>
-                                        <p className="text-muted-foreground text-sm">
-                                            Interactive PDF display will be implemented here
-                                        </p>
-                                    </div>
-                                </div>
+                                <PDFViewer file={pdfFile} />
                             </div>
                         </CardContent>
                     </Card>
