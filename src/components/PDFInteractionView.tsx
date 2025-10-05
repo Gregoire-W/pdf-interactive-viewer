@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import { useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -8,14 +8,10 @@ import { Separator } from '@/components/ui/separator'
 import {
     ArrowLeft,
     Highlighter,
-    Bold,
     Underline,
     Type,
     MousePointer,
     Copy,
-    Download,
-    ZoomIn,
-    ZoomOut
 } from 'lucide-react'
 import { PDFFile } from './PDFDropzone'
 
@@ -26,6 +22,8 @@ interface PDFInteractionViewProps {
 
 export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionViewProps) {
     if (!pdfFile) return null
+
+    const pdfContainerRef = useRef<HTMLDivElement>(null)
 
     const interactionTools = [
         {
@@ -136,7 +134,10 @@ export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionVi
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="h-full">
-                            <div className="w-full h-full bg-muted/20 rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center">
+                            <div
+                                className="w-full h-full bg-muted/20 rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center"
+                                ref={pdfContainerRef}
+                            >
                                 <div className="text-center space-y-4">
                                     <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mx-auto">
                                         <Type className="h-8 w-8 text-primary" />
