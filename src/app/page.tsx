@@ -1,11 +1,17 @@
 "use client"
 
 import PDFDropzone, { PDFFile } from '@/components/PDFDropzone'
+import PDFInteractionView from '@/components/PDFInteractionView'
 import { useState } from 'react'
 
 export default function Home() {
 
   const [pdfFile, setPdfFile] = useState<PDFFile | null>(null)
+  const [showDropzone, setShowDropzone] = useState(true)
+
+  const handleContinue = () => {
+    setShowDropzone(false)
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
@@ -31,7 +37,7 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto">
+        <div className="">
           {/* Hero Section */}
           <div className="text-center mb-12 space-y-4">
             <h2 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
@@ -45,7 +51,15 @@ export default function Home() {
           </div>
 
           {/* Dropzone Component */}
-          <PDFDropzone pdfFile={pdfFile} setPdfFile={setPdfFile} />
+          {
+            showDropzone ? (
+              <div className="max-w-4xl mx-auto">
+                <PDFDropzone pdfFile={pdfFile} setPdfFile={setPdfFile} handleContinue={handleContinue} />
+              </div>
+            ) : (
+              <PDFInteractionView pdfFile={pdfFile} onBack={() => setShowDropzone(true)} />
+            )
+          }
 
           {/* Features Section */}
           <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -89,15 +103,49 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t bg-muted/30 mt-24">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex justify-center items-center space-x-8">
-            <a href="https://github.com/Gregoire-W" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              GitHub Profile
-            </a>
-            <a href="https://github.com/Gregoire-W/pdf-interactive-viewer" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Source Code
-            </a>
+      <footer className="border-t bg-background/50 backdrop-blur-sm mt-15">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex flex-col items-center space-y-6">
+
+            {/* Main Links */}
+            <div className="flex items-center justify-center space-x-8">
+
+              {/* GitHub Profile Link */}
+              <a
+                href="https://github.com/Gregoire-W"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-muted/50 transition-all duration-200"
+              >
+                <div className="w-6 h-6 bg-muted-foreground/20 rounded-md flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  {/* Placeholder for GitHub icon - you can replace with your custom SVG */}
+                  <div className="w-4 h-4 bg-muted-foreground/40 rounded-sm group-hover:bg-primary/60 transition-colors"></div>
+                </div>
+                <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+                  GitHub Profile
+                </span>
+              </a>
+
+              {/* Separator */}
+              <div className="w-px h-8 bg-border"></div>
+
+              {/* Source Code Link */}
+              <a
+                href="https://github.com/Gregoire-W/pdf-interactive-viewer"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-muted/50 transition-all duration-200"
+              >
+                <div className="w-6 h-6 bg-muted-foreground/20 rounded-md flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  {/* Placeholder for code/repo icon - you can replace with your custom SVG */}
+                  <div className="w-4 h-4 bg-muted-foreground/40 rounded-sm group-hover:bg-primary/60 transition-colors"></div>
+                </div>
+                <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+                  Source Code
+                </span>
+              </a>
+
+            </div>
           </div>
         </div>
       </footer>
