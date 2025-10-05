@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -23,7 +24,19 @@ interface PDFInteractionViewProps {
 }
 
 export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionViewProps) {
+    const [activeTool, setActiveTool] = useState<string | null>(null)
+
     if (!pdfFile) return null
+
+    const handleToolClick = (action: string) => {
+        if (activeTool === action) {
+            // Si l'outil est déjà actif, le désactiver
+            setActiveTool(null)
+        } else {
+            // Sinon, activer ce nouvel outil
+            setActiveTool(action)
+        }
+    }
 
     const interactionTools = [
         {
@@ -104,21 +117,45 @@ export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionVi
                             {/* Interaction Tools */}
                             <div className="space-y-3 flex flex-col justify-center flex-1">
                                 <h4 className="font-semibold text-sm">Text Interactions</h4>
-                                {interactionTools.map((tool, index) => (
-                                    <Card key={index} className="p-3 hover:bg-muted/50 transition-colors cursor-pointer">
-                                        <div className="flex items-start gap-3">
-                                            <div className={`p-2 rounded-lg ${tool.color}`}>
-                                                {tool.icon}
+                                {interactionTools.map((tool, index) => {
+                                    const isActive = activeTool === tool.action
+                                    return (
+                                        <Card
+                                            key={index}
+                                            className={`p-3 transition-all duration-200 cursor-pointer transform ${isActive
+                                                ? 'bg-primary/10 border-primary shadow-md scale-[1.02] ring-2 ring-primary/20'
+                                                : 'hover:bg-muted/50 hover:shadow-sm'
+                                                }`}
+                                            onClick={() => handleToolClick(tool.action)}
+                                        >
+                                            <div className="flex items-start gap-3">
+                                                <div className={`p-2 rounded-lg transition-colors ${isActive
+                                                    ? 'bg-primary text-primary-foreground shadow-sm'
+                                                    : tool.color
+                                                    }`}>
+                                                    {tool.icon}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center gap-2">
+                                                        <h5 className={`font-medium text-sm ${isActive ? 'text-primary font-semibold' : ''
+                                                            }`}>
+                                                            {tool.title}
+                                                        </h5>
+                                                        {isActive && (
+                                                            <Badge variant="default" className="text-xs px-2 py-0.5">
+                                                                Active
+                                                            </Badge>
+                                                        )}
+                                                    </div>
+                                                    <p className={`text-xs mt-1 ${isActive ? 'text-primary/70' : 'text-muted-foreground'
+                                                        }`}>
+                                                        {tool.description}
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <div className="flex-1 min-w-0">
-                                                <h5 className="font-medium text-sm">{tool.title}</h5>
-                                                <p className="text-xs text-muted-foreground mt-1">
-                                                    {tool.description}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </Card>
-                                ))}
+                                        </Card>
+                                    )
+                                })}
                             </div>
                         </CardContent>
                     </Card>
