@@ -1,6 +1,12 @@
-import PDFDropzone from '@/components/PDFDropzone'
+"use client"
+
+import PDFDropzone, { PDFFile } from '@/components/PDFDropzone'
+import { useState } from 'react'
 
 export default function Home() {
+
+  const [pdfFile, setPdfFile] = useState<PDFFile | null>(null)
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       {/* Header */}
@@ -39,7 +45,7 @@ export default function Home() {
           </div>
 
           {/* Dropzone Component */}
-          <PDFDropzone />
+          <PDFDropzone pdfFile={pdfFile} setPdfFile={setPdfFile} />
 
           {/* Features Section */}
           <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">

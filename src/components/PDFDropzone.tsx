@@ -13,7 +13,8 @@ import {
     XCircle,
     AlertCircle,
     Trash2,
-    Eye
+    Eye,
+    ArrowRight
 } from 'lucide-react'
 
 interface PDFFile {
@@ -23,9 +24,23 @@ interface PDFFile {
     error?: string
 }
 
-export default function PDFDropzone() {
-    const [pdfFile, setPdfFile] = useState<PDFFile | null>(null)
+interface PDFDropzoneProps {
+    onContinue?: () => void
+    pdfFile: PDFFile | null
+    setPdfFile: (file: PDFFile | null) => void
+}
+
+export default function PDFDropzone({ onContinue, pdfFile, setPdfFile }: PDFDropzoneProps) {
     const [isDragOver, setIsDragOver] = useState(false)
+
+    // Open PDF in new tab using blob URL
+    const handleViewPDF = useCallback(() => {
+        if (!pdfFile || pdfFile.status !== 'success') return;
+        const blobUrl = URL.createObjectURL(pdfFile.file);
+        window.open(blobUrl, '_blank');
+        // Optionally revoke the object URL after some time
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+    }, [pdfFile]);
 
     const validatePDFFile = (file: File): string | null => {
         if (file.type !== 'application/pdf') {
@@ -37,38 +52,38 @@ export default function PDFDropzone() {
         return null
     }
 
-    const simulateUpload = () => {
-        let progress = 0
+    const simulateUpload = (file: PDFFile) => {
+        let progress = 0;
         const interval = setInterval(() => {
-            progress += Math.random() * 20
+            progress += Math.random() * 20;
             if (progress >= 100) {
-                setPdfFile(prev => prev ? { ...prev, status: 'success', progress: 100 } : null)
-                clearInterval(interval)
+                setPdfFile({ ...file, status: 'success', progress: 100 });
+                clearInterval(interval);
             } else {
-                setPdfFile(prev => prev ? { ...prev, progress: Math.min(progress, 99) } : null)
+                setPdfFile({ ...file, progress: Math.min(progress, 99) });
             }
-        }, 200)
+        }, 200);
     }
 
     const handleFile = useCallback((file: File) => {
-        const error = validatePDFFile(file)
-
+        const error = validatePDFFile(file);
         if (error) {
             setPdfFile({
                 file,
                 status: 'error',
                 progress: 0,
                 error
-            })
+            });
         } else {
-            setPdfFile({
+            const uploadingFile: PDFFile = {
                 file,
                 status: 'uploading',
                 progress: 0
-            })
-            setTimeout(() => simulateUpload(), 100)
+            };
+            setPdfFile(uploadingFile);
+            setTimeout(() => simulateUpload(uploadingFile), 100);
         }
-    }, [])
+    }, [setPdfFile]);
 
     const handleDrop = useCallback((e: React.DragEvent) => {
         e.preventDefault()
@@ -208,15 +223,15 @@ export default function PDFDropzone() {
                             {/* Action buttons */}
                             <div className="flex justify-center gap-4 pt-4">
                                 {pdfFile.status === 'success' && (
-                                    <Button size="lg" className="px-8">
+                                    <Button size="lg" className="px-8" onClick={handleViewPDF}>
                                         <Eye className="h-4 w-4 mr-2" />
                                         View PDF
                                     </Button>
                                 )}
 
-                                <Button variant="outline" size="lg" onClick={removeFile}>
-                                    <Upload className="h-4 w-4 mr-2" />
-                                    Upload new file
+                                <Button variant="outline" size="lg">
+                                    <ArrowRight className="h-4 w-4 mr-2" />
+                                    Interact with PDF
                                 </Button>
                             </div>
                         </div>
@@ -226,3 +241,5 @@ export default function PDFDropzone() {
         </div>
     )
 }
+
+export { type PDFFile }
