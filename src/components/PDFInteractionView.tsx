@@ -138,19 +138,19 @@ export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionVi
 
     return (
         <div className="w-full max-w-full mx-auto">
-            {/* Back Button */}
-            <div className="mb-6">
-                <Button variant="outline" onClick={onBack} className="gap-2">
-                    <ArrowLeft className="h-4 w-4" />
-                    Back to Upload
-                </Button>
-            </div>
 
             {/* Main Layout */}
             <div className="flex flex-col lg:flex-row lg:space-x-5 h-205">
 
                 {/* Left Panel - Interaction Tools (40% / 2 columns) */}
-                <div className="lg:w-2/5 space-y-4 h-full min-h-0 flex items-center justify-center">
+                <div className="lg:w-2/5 space-y-4 h-full min-h-0 flex flex-col items-center justify-center">
+                    {/* Back Button */}
+                    <div className="">
+                        <Button variant="outline" onClick={onBack} className="gap-2">
+                            <ArrowLeft className="h-4 w-4" />
+                            Back to Upload
+                        </Button>
+                    </div>
                     <Card className=''>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
