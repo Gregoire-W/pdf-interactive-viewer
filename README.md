@@ -2,7 +2,9 @@
 
 A modern, interactive PDF viewer built with **Next.js 15** and **React 19** that enables advanced text manipulation and analysis directly in the browser.
 
-> **🌟 [✨ Try it live →](https://pdf-interactive-viewer.vercel.app)** | Upload any PDF and start exploring instantly!
+## 🚀 Live Demo
+
+**[Try it live](https://pdf-interactive-viewer.vercel.app)**
 
 ![Next.js](https://img.shields.io/badge/Next.js-15.5.4-black?style=flat-square&logo=next.js)
 ![React](https://img.shields.io/badge/React-19.1.0-blue?style=flat-square&logo=react)
@@ -113,20 +115,6 @@ src/
     └── utils.ts           # Utility functions
 ```
 
-## 🔧 Configuration
-
-### PDF.js Worker Setup
-The application includes a custom PDF.js worker configuration to handle PDF processing in the browser:
-
-```typescript
-// src/lib/pdf-config.ts
-import { GlobalWorkerOptions } from 'pdfjs-dist';
-
-if (typeof window !== 'undefined') {
-  GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
-}
-```
-
 ## 🚀 Deployment
 
 ### Build for Production
@@ -134,35 +122,6 @@ if (typeof window !== 'undefined') {
 npm run build
 npm start
 ```
-
-### Deploy to Vercel
-This project is optimized for Vercel deployment with Next.js 15:
-
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Deploy automatically with zero configuration
-
-## 🤝 Contributing
-
-Contributions are welcome! Areas for improvement:
-
-- Additional text interaction tools
-- Multi-page PDF support  
-- Export functionality for selected text
-- Advanced font analysis features
-- Performance optimizations for large PDFs
-
-## 🌐 Live Demo
-
-### **� [Try the Application Live](https://pdf-interactive-viewer.vercel.app)**
-
-**Experience the PDF Interactive Viewer in action:**
-- 📤 **Upload any PDF** directly in your browser
-- 🎨 **Test all interactive tools** (highlight bold/italic text, underline large text, etc.)
-- 🔍 **Explore font analysis** with real document examples
-- 📱 **Responsive design** - works on desktop, tablet, and mobile
-
-> *No installation required - just open the link and start exploring!*
 
 ## 📝 Open Source
 
