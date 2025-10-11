@@ -2,6 +2,8 @@
 
 A modern, interactive PDF viewer built with **Next.js 15** and **React 19** that enables advanced text manipulation and analysis directly in the browser.
 
+> **🌟 [✨ Try it live →](https://pdf-interactive-viewer.vercel.app)** | Upload any PDF and start exploring instantly!
+
 ![Next.js](https://img.shields.io/badge/Next.js-15.5.4-black?style=flat-square&logo=next.js)
 ![React](https://img.shields.io/badge/React-19.1.0-blue?style=flat-square&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?style=flat-square&logo=typescript)
@@ -150,14 +152,24 @@ Contributions are welcome! Areas for improvement:
 - Advanced font analysis features
 - Performance optimizations for large PDFs
 
-## 📝 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
 ## 🌐 Live Demo
 
-**🔗 [View Live Application](https://pdf-interactive-viewer.vercel.app)**
+### **� [Try the Application Live](https://pdf-interactive-viewer.vercel.app)**
 
----
+**Experience the PDF Interactive Viewer in action:**
+- 📤 **Upload any PDF** directly in your browser
+- 🎨 **Test all interactive tools** (highlight bold/italic text, underline large text, etc.)
+- 🔍 **Explore font analysis** with real document examples
+- 📱 **Responsive design** - works on desktop, tablet, and mobile
 
-*Built with ❤️ using modern web technologies for seamless PDF interaction and text analysis.*
+> *No installation required - just open the link and start exploring!*
+
+## 📝 Open Source
+
+This project is **open source** and available for learning, contribution, and collaboration. Feel free to:
+- 🔍 **Explore the code** to understand modern React/Next.js patterns
+- 🐛 **Report issues** or suggest improvements
+- 🤝 **Contribute** new features or optimizations
+- 🎓 **Learn** from the implementation of PDF processing and text analysis
+
+*All contributions and feedback are welcome!*
