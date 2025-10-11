@@ -56,8 +56,8 @@ export default function PDFViewer({ file }: PDFViewerProps) {
 
                     // Extract original font name
                     await page.getOperatorList();
-                    let extractedFonts = new Map<string, string>();
-                    for (const [_, data] of page.commonObjs) {
+                    const extractedFonts = new Map<string, string>();
+                    for (const [data] of page.commonObjs) {
                         extractedFonts.set(data.loadedName, data.name);
                     }
                     setFonts(extractedFonts);
@@ -150,7 +150,7 @@ export default function PDFViewer({ file }: PDFViewerProps) {
                         measureCtx && textContent.items.map((item, index) => {
                             if ("str" in item) {
                                 // TypeScript comprend ici que item est un TextItem
-                                const [a, b, c, d, e, f] = item.transform;
+                                const [a, b, e, f] = item.transform;
                                 const fontHeight = Math.sqrt(a * a + b * b); // hauteur réelle avec rotation
                                 const fontSizePx = fontHeight * scale;
 

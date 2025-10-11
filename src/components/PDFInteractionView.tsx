@@ -11,7 +11,6 @@ import {
     Underline,
     Type,
     MousePointer,
-    Copy,
 } from 'lucide-react'
 import { PDFFile } from './PDFDropzone'
 import dynamic from 'next/dynamic'
