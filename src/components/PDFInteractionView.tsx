@@ -101,15 +101,15 @@ export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionVi
         {
             icon: <Underline className="h-4 w-4" />,
             title: "Underline Large Text",
-            description: "Underline text over 16px font size",
+            description: "Underline text over 14px font size",
             action: "underline-large",
             color: "bg-blue-100 text-blue-800",
             execute: () => {
                 const pdfContainer = document.querySelector('.pdf-text-layer');
                 const largeSpans = pdfContainer?.querySelectorAll('span');
                 largeSpans?.forEach(span => {
-                    const fontSize = parseFloat((span as HTMLElement).style.fontSize);
-                    if (fontSize > 16) {
+                    const originalFontSize = parseFloat((span as HTMLElement).getAttribute('data-font-size') || '0');
+                    if (originalFontSize > 14) {
                         (span as HTMLElement).style.textDecoration = 'underline';
                         (span as HTMLElement).style.textDecorationColor = 'blue';
                     }

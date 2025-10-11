@@ -40,8 +40,6 @@ export default function PDFViewer({ file }: PDFViewerProps) {
         return fontName.toLowerCase().includes("italic");
     }
 
-
-
     useEffect(() => {
         let resizeTimeout: NodeJS.Timeout;
 
@@ -57,10 +55,11 @@ export default function PDFViewer({ file }: PDFViewerProps) {
                     // Extract original font name
                     await page.getOperatorList();
                     const extractedFonts = new Map<string, string>();
-                    for (const [data] of page.commonObjs) {
+                    for (const [idx, data] of page.commonObjs) {
                         extractedFonts.set(data.loadedName, data.name);
                     }
                     setFonts(extractedFonts);
+                    console.log("Extracted fonts:", extractedFonts);
 
                     // Load text content into state
                     const textContent = await page.getTextContent();
@@ -150,7 +149,7 @@ export default function PDFViewer({ file }: PDFViewerProps) {
                         measureCtx && textContent.items.map((item, index) => {
                             if ("str" in item) {
                                 // TypeScript comprend ici que item est un TextItem
-                                const [a, b, e, f] = item.transform;
+                                const [a, b, c, d, e, f] = item.transform;
                                 const fontHeight = Math.sqrt(a * a + b * b); // hauteur réelle avec rotation
                                 const fontSizePx = fontHeight * scale;
 
@@ -181,6 +180,7 @@ export default function PDFViewer({ file }: PDFViewerProps) {
                                         key={index}
                                         data-is-bold={isBoldFont(fonts.get(item.fontName) || item.fontName)}
                                         data-is-italic={isItalicFont(fonts.get(item.fontName) || item.fontName)}
+                                        data-font-size={Math.abs(item.transform[3])}
                                     >
                                         {item.str}
                                     </span>
