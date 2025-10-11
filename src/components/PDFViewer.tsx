@@ -8,14 +8,16 @@ import { PDFFile } from './PDFDropzone'
 
 interface PDFViewerProps {
     file: PDFFile;
+    activeTool?: string | null; // Nouvel prop pour l'outil actif
 }
 
-export default function PDFViewer({ file }: PDFViewerProps) {
+export default function PDFViewer({ file, activeTool }: PDFViewerProps) {
 
     const [textContent, setTextContent] = useState<TextContent | null>(null);
     const [scale, setScale] = useState<number>(1);
     const [viewport, setViewport] = useState<PageViewport | null>(null);
     const canvasContainerRef = useRef<HTMLDivElement | null>(null);
+    const [fonts, setFonts] = useState<Map<string, string>>(new Map());
 
     const formatTextContent = (textContent: TextContent, scale: number): void => {
         textContent.items = textContent.items.filter((item) => {
@@ -31,8 +33,34 @@ export default function PDFViewer({ file }: PDFViewerProps) {
         });
     }
 
+    const isBoldFont = (fontName: string): boolean => {
+        return fontName.toLowerCase().includes("bold");
+    }
+
+    const isItalicFont = (fontName: string): boolean => {
+        return fontName.toLowerCase().includes("italic");
+    }
+
     useEffect(() => {
-        console.log("start useEffect for file change");
+        const pdfContainer = document.querySelector('.pdf-text-layer');
+
+        if (activeTool === 'highlight-bold') {
+            const boldSpans = pdfContainer?.querySelectorAll('span[data-is-bold="true"]');
+            boldSpans?.forEach(span => {
+                (span as HTMLElement).style.backgroundColor = 'yellow';
+                (span as HTMLElement).style.opacity = '0.7';
+            });
+        } else {
+            // Retirer le surlignage
+            const allSpans = pdfContainer?.querySelectorAll('span');
+            allSpans?.forEach(span => {
+                (span as HTMLElement).style.backgroundColor = '';
+                (span as HTMLElement).style.opacity = '';
+            });
+        }
+    }, [activeTool]);
+
+    useEffect(() => {
         let resizeTimeout: NodeJS.Timeout;
 
         const loadPDF = async () => {
@@ -43,6 +71,14 @@ export default function PDFViewer({ file }: PDFViewerProps) {
                 try {
                     const pdf = await pdfjsLib.getDocument(fileUrl).promise;
                     const page = await pdf.getPage(1);
+
+                    // Extract original font name
+                    await page.getOperatorList();
+                    let extractedFonts = new Map<string, string>();
+                    for (const [_, data] of page.commonObjs) {
+                        extractedFonts.set(data.loadedName, data.name);
+                    }
+                    setFonts(extractedFonts);
 
                     // Load text content into state
                     const textContent = await page.getTextContent();
@@ -88,7 +124,6 @@ export default function PDFViewer({ file }: PDFViewerProps) {
             const handleResize = () => {
                 clearTimeout(resizeTimeout);
                 resizeTimeout = setTimeout(() => {
-                    console.log("Resizing PDF after 0.5 seconds delay");
                     loadPDF();
                 }, 500);
             };
@@ -118,7 +153,7 @@ export default function PDFViewer({ file }: PDFViewerProps) {
             </div>
             {viewport && textContent && (
                 <div
-                    className="text-transparent selection:bg-primary opacity-30"
+                    className="text-transparent selection:bg-primary opacity-30 pdf-text-layer"
                     style={{
                         position: "absolute",
                         top: 0,
@@ -162,6 +197,8 @@ export default function PDFViewer({ file }: PDFViewerProps) {
                                             transformOrigin: 'left top',
                                         }}
                                         key={index}
+                                        data-is-bold={isBoldFont(fonts.get(item.fontName) || item.fontName)}
+                                        data-is-italic={isItalicFont(fonts.get(item.fontName) || item.fontName)}
                                     >
                                         {item.str}
                                     </span>

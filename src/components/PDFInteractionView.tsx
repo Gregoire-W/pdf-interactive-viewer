@@ -174,7 +174,7 @@ export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionVi
                             <div
                                 className="size-full rounded-lg border-2 border-dashed border-muted-foreground/25 flex-1 overflow-auto h-full"
                             >
-                                <PDFViewer file={pdfFile} />
+                                <PDFViewer file={pdfFile} activeTool={activeTool} />
                             </div>
                         </CardContent>
                     </Card>
