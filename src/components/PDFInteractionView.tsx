@@ -18,62 +18,123 @@ import dynamic from 'next/dynamic'
 
 const PDFViewer = dynamic(() => import("./PDFViewer"), { ssr: false });
 
+interface InteractionTool {
+    icon: React.ReactNode
+    title: string
+    description: string
+    action: string
+    color: string
+    execute: () => void
+    cleanup?: () => void
+}
+
 interface PDFInteractionViewProps {
     pdfFile: PDFFile | null
     onBack: () => void
 }
 
 export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionViewProps) {
-    const [activeTool, setActiveTool] = useState<string | null>(null)
+    const [activeTool, setActiveTool] = useState<InteractionTool | null>(null)
 
     if (!pdfFile) return null
 
-    const handleToolClick = (action: string) => {
-        if (activeTool === action) {
-            // Si l'outil est déjà actif, le désactiver
+    const handleToolClick = (tool: InteractionTool) => {
+        if (activeTool?.action === tool.action) {
+            // Si l'outil est déjà actif, le désactiver et nettoyer
+            activeTool.cleanup?.();
             setActiveTool(null)
         } else {
-            // Sinon, activer ce nouvel outil
-            setActiveTool(action)
+            // Nettoyer l'outil précédent s'il existe
+            activeTool?.cleanup?.();
+            // Activer ce nouvel outil et exécuter sa fonction
+            setActiveTool(tool);
+            tool.execute();
         }
     }
 
-    const interactionTools = [
+    const interactionTools: InteractionTool[] = [
         {
             icon: <Highlighter className="h-4 w-4" />,
             title: "Highlight Bold Text",
             description: "Automatically highlight all bold text",
             action: "highlight-bold",
-            color: "bg-yellow-100 text-yellow-800"
+            color: "bg-yellow-100 text-yellow-800",
+            execute: () => {
+                const pdfContainer = document.querySelector('.pdf-text-layer');
+                const boldSpans = pdfContainer?.querySelectorAll('span[data-is-bold="true"]');
+                boldSpans?.forEach(span => {
+                    (span as HTMLElement).style.backgroundColor = 'yellow';
+                    (span as HTMLElement).style.opacity = '0.7';
+                });
+            },
+            cleanup: () => {
+                const pdfContainer = document.querySelector('.pdf-text-layer');
+                const allSpans = pdfContainer?.querySelectorAll('span');
+                allSpans?.forEach(span => {
+                    (span as HTMLElement).style.backgroundColor = '';
+                    (span as HTMLElement).style.opacity = '';
+                });
+            }
+        },
+        {
+            icon: <Type className="h-4 w-4" />,
+            title: "Highlight Italic Text",
+            description: "Automatically highlight all italic text",
+            action: "highlight-italic",
+            color: "bg-purple-100 text-purple-800",
+            execute: () => {
+                const pdfContainer = document.querySelector('.pdf-text-layer');
+                const italicSpans = pdfContainer?.querySelectorAll('span[data-is-italic="true"]');
+                italicSpans?.forEach(span => {
+                    (span as HTMLElement).style.backgroundColor = 'purple';
+                    (span as HTMLElement).style.opacity = '0.7';
+                });
+            },
+            cleanup: () => {
+                const pdfContainer = document.querySelector('.pdf-text-layer');
+                const allSpans = pdfContainer?.querySelectorAll('span');
+                allSpans?.forEach(span => {
+                    (span as HTMLElement).style.backgroundColor = '';
+                    (span as HTMLElement).style.opacity = '';
+                });
+            }
         },
         {
             icon: <Underline className="h-4 w-4" />,
             title: "Underline Large Text",
             description: "Underline text over 16px font size",
             action: "underline-large",
-            color: "bg-blue-100 text-blue-800"
+            color: "bg-blue-100 text-blue-800",
+            execute: () => {
+                const pdfContainer = document.querySelector('.pdf-text-layer');
+                const largeSpans = pdfContainer?.querySelectorAll('span');
+                largeSpans?.forEach(span => {
+                    const fontSize = parseFloat((span as HTMLElement).style.fontSize);
+                    if (fontSize > 16) {
+                        (span as HTMLElement).style.textDecoration = 'underline';
+                        (span as HTMLElement).style.textDecorationColor = 'blue';
+                    }
+                });
+            },
+            cleanup: () => {
+                const pdfContainer = document.querySelector('.pdf-text-layer');
+                const allSpans = pdfContainer?.querySelectorAll('span');
+                allSpans?.forEach(span => {
+                    (span as HTMLElement).style.textDecoration = '';
+                });
+            }
         },
         {
             icon: <Type className="h-4 w-4" />,
             title: "Select Text by Font",
             description: "Select all text with specific font properties",
             action: "select-font",
-            color: "bg-green-100 text-green-800"
+            color: "bg-green-100 text-green-800",
+            execute: () => {
+            },
+            cleanup: () => {
+            }
         },
-        {
-            icon: <MousePointer className="h-4 w-4" />,
-            title: "Manual Selection",
-            description: "Click and drag to select text manually",
-            action: "manual-select",
-            color: "bg-purple-100 text-purple-800"
-        },
-        {
-            icon: <Copy className="h-4 w-4" />,
-            title: "Copy Selected Text",
-            description: "Copy all selected text to clipboard",
-            action: "copy-text",
-            color: "bg-orange-100 text-orange-800"
-        }
     ]
 
     return (
@@ -87,11 +148,11 @@ export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionVi
             </div>
 
             {/* Main Layout */}
-            <div className="flex flex-col lg:flex-row lg:space-x-5 h-170">
+            <div className="flex flex-col lg:flex-row lg:space-x-5 h-205">
 
                 {/* Left Panel - Interaction Tools (40% / 2 columns) */}
-                <div className="lg:w-2/5 space-y-4 h-full min-h-0">
-                    <Card className='h-full'>
+                <div className="lg:w-2/5 space-y-4 h-full min-h-0 flex items-center justify-center">
+                    <Card className=''>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <MousePointer className="h-5 w-5" />
@@ -115,10 +176,10 @@ export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionVi
                             <Separator />
 
                             {/* Interaction Tools */}
-                            <div className="space-y-3 flex flex-col justify-center flex-1">
+                            <div className="space-y-3 flex flex-col justify-center">
                                 <h4 className="font-semibold text-sm">Text Interactions</h4>
                                 {interactionTools.map((tool, index) => {
-                                    const isActive = activeTool === tool.action
+                                    const isActive = activeTool?.action === tool.action
                                     return (
                                         <Card
                                             key={index}
@@ -126,7 +187,7 @@ export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionVi
                                                 ? 'bg-primary/10 border-primary shadow-md scale-[1.02] ring-2 ring-primary/20'
                                                 : 'hover:bg-muted/50 hover:shadow-sm'
                                                 }`}
-                                            onClick={() => handleToolClick(tool.action)}
+                                            onClick={() => handleToolClick(tool)}
                                         >
                                             <div className="flex items-start gap-3">
                                                 <div className={`p-2 rounded-lg transition-colors ${isActive
@@ -174,7 +235,7 @@ export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionVi
                             <div
                                 className="size-full rounded-lg border-2 border-dashed border-muted-foreground/25 flex-1 overflow-auto h-full"
                             >
-                                <PDFViewer file={pdfFile} activeTool={activeTool} />
+                                <PDFViewer file={pdfFile} />
                             </div>
                         </CardContent>
                     </Card>

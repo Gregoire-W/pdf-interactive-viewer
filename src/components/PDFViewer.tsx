@@ -8,10 +8,9 @@ import { PDFFile } from './PDFDropzone'
 
 interface PDFViewerProps {
     file: PDFFile;
-    activeTool?: string | null; // Nouvel prop pour l'outil actif
 }
 
-export default function PDFViewer({ file, activeTool }: PDFViewerProps) {
+export default function PDFViewer({ file }: PDFViewerProps) {
 
     const [textContent, setTextContent] = useState<TextContent | null>(null);
     const [scale, setScale] = useState<number>(1);
@@ -41,24 +40,7 @@ export default function PDFViewer({ file, activeTool }: PDFViewerProps) {
         return fontName.toLowerCase().includes("italic");
     }
 
-    useEffect(() => {
-        const pdfContainer = document.querySelector('.pdf-text-layer');
 
-        if (activeTool === 'highlight-bold') {
-            const boldSpans = pdfContainer?.querySelectorAll('span[data-is-bold="true"]');
-            boldSpans?.forEach(span => {
-                (span as HTMLElement).style.backgroundColor = 'yellow';
-                (span as HTMLElement).style.opacity = '0.7';
-            });
-        } else {
-            // Retirer le surlignage
-            const allSpans = pdfContainer?.querySelectorAll('span');
-            allSpans?.forEach(span => {
-                (span as HTMLElement).style.backgroundColor = '';
-                (span as HTMLElement).style.opacity = '';
-            });
-        }
-    }, [activeTool]);
 
     useEffect(() => {
         let resizeTimeout: NodeJS.Timeout;
