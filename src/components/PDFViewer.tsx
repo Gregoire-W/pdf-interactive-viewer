@@ -8,15 +8,16 @@ import { PDFFile } from './PDFDropzone'
 
 interface PDFViewerProps {
     file: PDFFile;
+    fontStyles: Map<string, string>;
+    setFontStyles: (fonts: Map<string, string>) => void;
 }
 
-export default function PDFViewer({ file }: PDFViewerProps) {
+export default function PDFViewer({ file, fontStyles, setFontStyles }: PDFViewerProps) {
 
     const [textContent, setTextContent] = useState<TextContent | null>(null);
     const [scale, setScale] = useState<number>(1);
     const [viewport, setViewport] = useState<PageViewport | null>(null);
     const canvasContainerRef = useRef<HTMLDivElement | null>(null);
-    const [fonts, setFonts] = useState<Map<string, string>>(new Map());
 
     const formatTextContent = (textContent: TextContent, scale: number): void => {
         textContent.items = textContent.items.filter((item) => {
@@ -58,7 +59,7 @@ export default function PDFViewer({ file }: PDFViewerProps) {
                     for (const [idx, data] of page.commonObjs) {
                         extractedFonts.set(data.loadedName, data.name);
                     }
-                    setFonts(extractedFonts);
+                    setFontStyles(extractedFonts);
                     console.log("Extracted fonts:", extractedFonts);
 
                     // Load text content into state
@@ -178,8 +179,8 @@ export default function PDFViewer({ file }: PDFViewerProps) {
                                             transformOrigin: 'left top',
                                         }}
                                         key={index}
-                                        data-is-bold={isBoldFont(fonts.get(item.fontName) || item.fontName)}
-                                        data-is-italic={isItalicFont(fonts.get(item.fontName) || item.fontName)}
+                                        data-is-bold={isBoldFont(fontStyles.get(item.fontName) || item.fontName)}
+                                        data-is-italic={isItalicFont(fontStyles.get(item.fontName) || item.fontName)}
                                         data-font-size={Math.abs(item.transform[3])}
                                     >
                                         {item.str}

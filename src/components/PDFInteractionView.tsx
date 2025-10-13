@@ -34,6 +34,8 @@ interface PDFInteractionViewProps {
 
 export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionViewProps) {
     const [activeTool, setActiveTool] = useState<InteractionTool | null>(null)
+    const [showFontsPanel, setShowFontsPanel] = useState(false)
+    const [fontStyles, setFontStyles] = useState<Map<string, string>>(new Map())
 
     if (!pdfFile) return null
 
@@ -130,6 +132,7 @@ export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionVi
             action: "select-font",
             color: "bg-green-100 text-green-800",
             execute: () => {
+                setShowFontsPanel(true);
             },
             cleanup: () => {
             }
@@ -234,7 +237,7 @@ export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionVi
                             <div
                                 className="size-full rounded-lg border-2 border-dashed border-muted-foreground/25 flex-1 overflow-auto h-full"
                             >
-                                <PDFViewer file={pdfFile} />
+                                <PDFViewer file={pdfFile} fontStyles={fontStyles} setFontStyles={setFontStyles} />
                             </div>
                         </CardContent>
                     </Card>
