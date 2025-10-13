@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -11,6 +11,7 @@ import {
     Underline,
     Type,
     MousePointer,
+    X,
 } from 'lucide-react'
 import { PDFFile } from './PDFDropzone'
 import dynamic from 'next/dynamic'
@@ -36,8 +37,55 @@ export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionVi
     const [activeTool, setActiveTool] = useState<InteractionTool | null>(null)
     const [showFontsPanel, setShowFontsPanel] = useState(false)
     const [fontStyles, setFontStyles] = useState<Map<string, string>>(new Map())
+    const [selectedFonts, setSelectedFonts] = useState<Set<string>>(new Set())
 
     if (!pdfFile) return null
+
+    // Obtenir la liste des polices détectées à partir de fontStyles et nettoyer les noms
+    const detectedFonts = Array.from(fontStyles.values())
+        .map(fontName => {
+            // Supprimer le préfixe de sous-ensemble (ex: CWQUBP+CharterBT-Bold -> CharterBT-Bold)
+            const cleanName = fontName.includes('+') ? fontName.split('+')[1] : fontName;
+            return cleanName;
+        })
+        .filter((name, index, array) => array.indexOf(name) === index) // Supprimer les doublons
+        .sort();
+
+    const handleFontSelection = (fontName: string, checked: boolean) => {
+        const newSelected = new Set(selectedFonts);
+        if (checked) {
+            newSelected.add(fontName);
+        } else {
+            newSelected.delete(fontName);
+        }
+        setSelectedFonts(newSelected);
+
+        // Appliquer immédiatement le surlignage
+        highlightSelectedFonts(newSelected);
+    };
+
+    const highlightSelectedFonts = (fontsToHighlight: Set<string>) => {
+        const pdfContainer = document.querySelector('.pdf-text-layer');
+        const allSpans = pdfContainer?.querySelectorAll('span[data-font-name]');
+
+        allSpans?.forEach(span => {
+            const fontName = (span as HTMLElement).getAttribute('data-font-name');
+            const element = span as HTMLElement;
+
+            if (fontName) {
+                // Nettoyer le nom de la police pour la comparaison
+                const cleanFontName = fontName.includes('+') ? fontName.split('+')[1] : fontName;
+
+                if (fontsToHighlight.has(cleanFontName)) {
+                    element.style.backgroundColor = 'lightgreen';
+                    element.style.opacity = '0.8';
+                } else {
+                    element.style.backgroundColor = '';
+                    element.style.opacity = '';
+                }
+            }
+        });
+    };
 
     const handleToolClick = (tool: InteractionTool) => {
         if (activeTool?.action === tool.action) {
@@ -135,6 +183,14 @@ export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionVi
                 setShowFontsPanel(true);
             },
             cleanup: () => {
+                setShowFontsPanel(false);
+                setSelectedFonts(new Set());
+                const pdfContainer = document.querySelector('.pdf-text-layer');
+                const allSpans = pdfContainer?.querySelectorAll('span');
+                allSpans?.forEach(span => {
+                    (span as HTMLElement).style.backgroundColor = '';
+                    (span as HTMLElement).style.opacity = '';
+                });
             }
         },
     ]
@@ -220,6 +276,54 @@ export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionVi
                                     )
                                 })}
                             </div>
+
+                            {/* Panneau des polices */}
+                            {showFontsPanel && (
+                                <>
+                                    <Separator />
+                                    <div className="space-y-3">
+                                        <div className="flex items-center justify-between">
+                                            <h4 className="font-semibold text-sm">Font Selection</h4>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => {
+                                                    setShowFontsPanel(false);
+                                                    setSelectedFonts(new Set());
+                                                    highlightSelectedFonts(new Set());
+                                                }}
+                                            >
+                                                <X className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                        <div className="max-h-60 overflow-y-auto space-y-2">
+                                            {detectedFonts.map((fontName, index) => (
+                                                <div key={index} className="flex items-center space-x-2">
+                                                    <input
+                                                        type="checkbox"
+                                                        id={`font-${index}`}
+                                                        checked={selectedFonts.has(fontName)}
+                                                        onChange={(e) => handleFontSelection(fontName, e.target.checked)}
+                                                        className="rounded border-gray-300"
+                                                    />
+                                                    <label
+                                                        htmlFor={`font-${index}`}
+                                                        className="text-xs font-mono cursor-pointer flex-1 truncate"
+                                                        title={fontName}
+                                                    >
+                                                        {fontName}
+                                                    </label>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        {detectedFonts.length === 0 && (
+                                            <p className="text-xs text-muted-foreground text-center py-4">
+                                                No fonts detected yet...
+                                            </p>
+                                        )}
+                                    </div>
+                                </>
+                            )}
                         </CardContent>
                     </Card>
                 </div>

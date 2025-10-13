@@ -182,6 +182,7 @@ export default function PDFViewer({ file, fontStyles, setFontStyles }: PDFViewer
                                         data-is-bold={isBoldFont(fontStyles.get(item.fontName) || item.fontName)}
                                         data-is-italic={isItalicFont(fontStyles.get(item.fontName) || item.fontName)}
                                         data-font-size={Math.abs(item.transform[3])}
+                                        data-font-name={fontStyles.get(item.fontName) || item.fontName}
                                     >
                                         {item.str}
                                     </span>
