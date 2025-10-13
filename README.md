@@ -2,9 +2,14 @@
 
 A modern, interactive PDF viewer built with **Next.js 15** and **React 19** that enables advanced text manipulation and analysis directly in the browser.
 
-## 🚀 Live Demo
+---
 
-**[Try it live](https://pdf-interactive-viewer.vercel.app)**
+## 🌟 Live Demo
+
+> ### **[🚀 Try it live →](https://pdf-interactive-viewer.vercel.app)**
+> Upload any PDF and start exploring with interactive text analysis tools
+
+---
 
 ![Next.js](https://img.shields.io/badge/Next.js-15.5.4-black?style=flat-square&logo=next.js)
 ![React](https://img.shields.io/badge/React-19.1.0-blue?style=flat-square&logo=react)
