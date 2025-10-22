@@ -199,10 +199,10 @@ export default function PDFInteractionView({ pdfFile, onBack }: PDFInteractionVi
         <div className="w-full max-w-full mx-auto">
 
             {/* Main Layout */}
-            <div className="flex flex-col lg:flex-row lg:space-x-5 h-205">
+            <div className="flex flex-col lg:flex-row lg:space-x-5 gap-4 lg:h-205">
 
                 {/* Left Panel - Interaction Tools (40% / 2 columns) */}
-                <div className="lg:w-2/5 space-y-4 h-full min-h-0 flex flex-col items-center justify-center">
+                <div className="lg:w-2/5 space-y-4 h-full min-h-0 flex flex-col items-center lg:justify-center">
                     {/* Back Button */}
                     <div className="">
                         <Button variant="outline" onClick={onBack} className="gap-2">
