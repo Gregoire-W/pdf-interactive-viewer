@@ -57,10 +57,11 @@ export default function PDFViewer({ file, fontStyles, setFontStyles }: PDFViewer
                     await page.getOperatorList();
                     const extractedFonts = new Map<string, string>();
                     for (const [idx, data] of page.commonObjs) {
-                        extractedFonts.set(data.loadedName, data.name);
+                        if (data.name) {
+                            extractedFonts.set(idx, data.name);
+                        }
                     }
                     setFontStyles(extractedFonts);
-                    console.log("Extracted fonts:", extractedFonts);
 
                     // Load text content into state
                     const textContent = await page.getTextContent();
