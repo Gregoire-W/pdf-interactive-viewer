@@ -14,7 +14,8 @@ import {
     AlertCircle,
     Trash2,
     Eye,
-    ArrowRight
+    ArrowRight,
+    LoaderCircle
 } from 'lucide-react'
 
 interface PDFFile {
@@ -119,7 +120,7 @@ export default function PDFDropzone({ handleContinue, pdfFile, setPdfFile }: PDF
     const getStatusIcon = (status: PDFFile['status']) => {
         switch (status) {
             case 'uploading':
-                return <Upload className="h-4 w-4 animate-spin" />
+                return <LoaderCircle className="h-4 w-4 animate-spin" />
             case 'success':
                 return <CheckCircle2 className="h-4 w-4 text-green-600" />
             case 'error':
